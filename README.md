@@ -20,3 +20,10 @@ Simple timer to track how much time is spent on each image and how many steps we
 - Adobe Photoshop
 - `pyfiglet` Python library
 - `curses` Python library
+
+
+## Usage
+
+1. Open Photoshop
+2. Run either directly from VScode or any other terminal "python3 main.py"
+3. The elapsed time and history states for each document will be displayed in the terminal.
