@@ -1,5 +1,13 @@
 # photoshop-timer
-Simple timer to track how much time is spent on each image. 
+Simple timer to track how much time is spent on each image and how many steps were taken to edit it.
+
+## Features
+
+- Tracks the time spent on each image in Adobe Photoshop.
+- Displays the elapsed time and history states for each document.
+- Updates the display every second.
+- Uses ASCII art to display the elapsed time for the currently active document.
+- Keeps record of all edited images.
 
 ![photoshop-timer-demoASCII](https://github.com/xRyul/photoshop-timer/assets/47340038/df241982-3900-41f0-b9b4-09b067e57376)
 
@@ -9,3 +17,6 @@ Simple timer to track how much time is spent on each image.
 
 # Requirements
 - macOS (we use AppleScript to detect which document is open in Photoshop)
+- Adobe Photoshop
+- `pyfiglet` Python library
+- `curses` Python library
