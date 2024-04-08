@@ -30,7 +30,7 @@ def format_time(seconds, ascii_art=False):
     time_str = "{:02}:{:02}:{:02}".format(int(hours), int(minutes), int(seconds))
     
     if ascii_art:
-        f = Figlet(font='slant')
+        f = Figlet(font='starwars')
         return f.renderText(time_str)
     else:
         return time_str
@@ -65,17 +65,16 @@ def main(stdscr):
 
             # Display times and history counts for all documents
             for i, (doc, (elapsed_time, doc_history_count)) in enumerate(doc_times.items()):
-                stdscr.addstr(i*3, 0, 'Document {} was active for: {}'.format(doc, format_time(elapsed_time)))
-                stdscr.addstr(i*3+1, 0, 'with {} history states'.format(doc_history_count))
+                stdscr.addstr(i, 0, 'Document {} was active for: {} with {} history states'.format(doc, format_time(elapsed_time), doc_history_count))
 
             # Display timer and history count for active document
             if active_doc:
                 elapsed_time = time.time() - start_time
-                stdscr.addstr(len(doc_times)*3, 0, 'Document {} has been active for:'.format(active_doc))
-                stdscr.addstr(len(doc_times)*3+2, 0, 'with {} history states'.format(history_count))
-                stdscr.addstr(len(doc_times)*3+1, 0, format_time(elapsed_time, ascii_art=True))
+                stdscr.addstr(len(doc_times), 0, 'Document {} with {} history states, has been active for:'.format(active_doc, history_count))
+                stdscr.addstr(len(doc_times)+1, 0, format_time(elapsed_time, ascii_art=True))
             else:
-                stdscr.addstr(len(doc_times)*3, 0, 'No active document')
+                stdscr.addstr(len(doc_times), 0, 'No active document')
+
 
             stdscr.refresh()  # Refresh the screen to update the printed text
             time.sleep(1)
