@@ -6,6 +6,7 @@ def get_active_photoshop_document_and_history_count():
     applescript = """
     tell application "Adobe Photoshop 2024"
         if (count of documents) > 0 then
+            delay 2  -- Wait for 2 seconds to ensure the document is fully loaded
             set docName to the name of the current document
             set historyCount to the count of the history states of the current document
             return docName & "," & historyCount
@@ -23,6 +24,9 @@ def get_active_photoshop_document_and_history_count():
         return "", 0
 
 def main(stdscr):
+    # Wait for a while before starting to ensure all images are opened
+    time.sleep(10)
+
     active_doc, history_count = get_active_photoshop_document_and_history_count()
     start_time = time.time()
     doc_times = {}
@@ -39,17 +43,17 @@ def main(stdscr):
                 if active_doc:
                     elapsed_time = time.time() - start_time
                     doc_times[active_doc] = (elapsed_time, history_count)
-                    stdscr.addstr(0, 0, 'Document {} was active for {:.2f} seconds with {} history states'.format(active_doc, elapsed_time, history_count))
-                    stdscr.refresh()  # Refresh the screen to update the printed text
                 active_doc = current_doc
-                history_count = current_history_count
                 start_time = time.time()
 
-            # Display times for all documents
+            # Update history count for active document
+            history_count = current_history_count
+
+            # Display times and history counts for all documents
             for i, (doc, (elapsed_time, history_count)) in enumerate(doc_times.items()):
                 stdscr.addstr(i, 0, 'Document {} was active for {:.2f} seconds with {} history states'.format(doc, elapsed_time, history_count))
 
-            # Display timer for active document
+            # Display timer and history count for active document
             if active_doc:
                 elapsed_time = time.time() - start_time
                 stdscr.addstr(len(doc_times), 0, 'Document {} has been active for {:.2f} seconds with {} history states'.format(active_doc, elapsed_time, history_count))
@@ -62,7 +66,9 @@ def main(stdscr):
         except Exception as e:
             stdscr.addstr(0, 0, "An error occurred: {}".format(e))
             stdscr.refresh()  # Refresh the screen to update the printed text
-            break
+            # Continue execution even if an error occurred
+            continue
 
 if __name__ == '__main__':
     curses.wrapper(main)
+
