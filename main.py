@@ -1,6 +1,7 @@
 import os
 import time
 import curses
+from pyfiglet import Figlet
 
 def get_active_photoshop_document_and_history_count():
     applescript = """
@@ -23,10 +24,16 @@ def get_active_photoshop_document_and_history_count():
     else:
         return "", 0
 
-def format_time(seconds):
+def format_time(seconds, ascii_art=False):
     hours, remainder = divmod(seconds, 3600)
     minutes, seconds = divmod(remainder, 60)
-    return "{:02}:{:02}:{:02}".format(int(hours), int(minutes), int(seconds))
+    time_str = "{:02}:{:02}:{:02}".format(int(hours), int(minutes), int(seconds))
+    
+    if ascii_art:
+        f = Figlet(font='slant')
+        return f.renderText(time_str)
+    else:
+        return time_str
 
 
 def main(stdscr):
@@ -58,15 +65,17 @@ def main(stdscr):
 
             # Display times and history counts for all documents
             for i, (doc, (elapsed_time, doc_history_count)) in enumerate(doc_times.items()):
-                stdscr.addstr(i, 0, 'Document {} was active for {} with {} history states'.format(doc, format_time(elapsed_time), doc_history_count))
+                stdscr.addstr(i*3, 0, 'Document {} was active for: {}'.format(doc, format_time(elapsed_time)))
+                stdscr.addstr(i*3+1, 0, 'with {} history states'.format(doc_history_count))
 
             # Display timer and history count for active document
             if active_doc:
                 elapsed_time = time.time() - start_time
-                stdscr.addstr(len(doc_times), 0, 'Document {} has been active for {} with {} history states'.format(active_doc, format_time(elapsed_time), history_count))
+                stdscr.addstr(len(doc_times)*3, 0, 'Document {} has been active for:'.format(active_doc))
+                stdscr.addstr(len(doc_times)*3+2, 0, 'with {} history states'.format(history_count))
+                stdscr.addstr(len(doc_times)*3+1, 0, format_time(elapsed_time, ascii_art=True))
             else:
-                stdscr.addstr(len(doc_times), 0, 'No active document')
-
+                stdscr.addstr(len(doc_times)*3, 0, 'No active document')
 
             stdscr.refresh()  # Refresh the screen to update the printed text
             time.sleep(1)
@@ -79,4 +88,3 @@ def main(stdscr):
 
 if __name__ == '__main__':
     curses.wrapper(main)
-
