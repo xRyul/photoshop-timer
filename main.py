@@ -2,6 +2,8 @@ import os
 import time
 import curses
 from pyfiglet import Figlet
+import csv
+from collections import defaultdict
 
 def get_active_photoshop_document_and_history_count():
     applescript = """
@@ -37,8 +39,10 @@ def format_time(seconds, ascii_art=False):
 
 
 def main(stdscr):
-    # Wait for a while before starting to ensure all images are opened
-    # time.sleep(10)
+    # Set up logging
+    with open('processed_files.csv', 'w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(["Department", "Filename", "Execution Time", "History Steps"])
 
     # Enable scrolling
     stdscr.scrollok(True)
@@ -60,6 +64,9 @@ def main(stdscr):
                 if active_doc:
                     elapsed_time = time.time() - start_time
                     doc_times[active_doc] = (elapsed_time, history_count)
+                    with open('processed_files.csv', 'a', newline='') as file:
+                        writer = csv.writer(file)
+                        writer.writerow([active_doc[:2], active_doc, format_time(elapsed_time), history_count])
                 active_doc = current_doc
                 start_time = time.time()
                 history_count = current_history_count  # Reset history count for the new active document
@@ -78,7 +85,6 @@ def main(stdscr):
                 stdscr.addstr(len(doc_times)+1, 0, format_time(elapsed_time, ascii_art=True))
             else:
                 stdscr.addstr(len(doc_times), 0, 'No active document')
-
 
             stdscr.refresh()  # Refresh the screen to update the printed text
             time.sleep(1)
