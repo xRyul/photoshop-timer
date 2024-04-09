@@ -1,14 +1,21 @@
 import pandas as pd
+import glob
 
-# Load the CSV file into a DataFrame
-df = pd.read_csv('/Users/dan00477/Desktop/photoshop-timer/logs/2024-04-09.csv', skiprows=1)
-df.columns = ['Department', 'Filename', 'Execution Time', 'History Steps']
+# Get a list of all CSV files in the 'logs' subfolder
+files = glob.glob('/Users/dan00477/Desktop/photoshop-timer/logs/*.csv')
 
-# Convert Execution Time to seconds for easier calculation
-df['Execution Time'] = pd.to_timedelta(df['Execution Time']).dt.total_seconds()
+# Initialize an empty DataFrame to store all data
+all_data = pd.DataFrame()
+
+# Loop through all files and append their data to the DataFrame
+for file in files:
+    df = pd.read_csv(file, skiprows=1)
+    df.columns = ['Department', 'Filename', 'Execution Time', 'History Steps']
+    df['Execution Time'] = pd.to_timedelta(df['Execution Time']).dt.total_seconds()
+    all_data = pd.concat([all_data, df], ignore_index=True)
 
 # Group by Department and calculate the mean of Execution Time and History Steps
-grouped = df.groupby('Department').agg({'Execution Time': 'mean', 'History Steps': 'mean'}).reset_index()
+grouped = all_data.groupby('Department').agg({'Execution Time': 'mean', 'History Steps': 'mean'}).reset_index()
 
 # Convert 'Department' to int
 grouped['Department'] = grouped['Department'].astype(int)
