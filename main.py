@@ -40,6 +40,10 @@ def main(stdscr):
     # Wait for a while before starting to ensure all images are opened
     # time.sleep(10)
 
+    # Enable scrolling
+    stdscr.scrollok(True)
+    stdscr.idlok(True)
+
     active_doc, history_count = get_active_photoshop_document_and_history_count()
     start_time = time.time()
     doc_times = {}
