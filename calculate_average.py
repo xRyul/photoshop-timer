@@ -1,7 +1,7 @@
 import pandas as pd
 
 # Load the CSV file into a DataFrame
-df = pd.read_csv('/Users/dan00477/Desktop/photoshop-timer/processed_files.csv', skiprows=1)
+df = pd.read_csv('/Users/dan00477/Desktop/photoshop-timer/logs/2024-04-09.csv', skiprows=1)
 df.columns = ['Department', 'Filename', 'Execution Time', 'History Steps']
 
 # Convert Execution Time to seconds for easier calculation

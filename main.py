@@ -1,8 +1,10 @@
 import os
 import time
 import curses
-from pyfiglet import Figlet
 import csv
+import datetime
+from pyfiglet import Figlet
+
 
 def get_active_photoshop_document_and_history_count():
     applescript = """
@@ -41,11 +43,19 @@ def main(stdscr):
 
     try:
 
-        # Set up logging
-        with open('processed_files.csv', 'w', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerow(["Department", "Filename", "Execution Time", "History Steps"])
+        # Get today's date and format it as a string
+        today = datetime.date.today()
+        filename = today.strftime('%Y-%m-%d.csv')
+        # Create a subfolder named 'logs' if it doesn't exist
+        if not os.path.exists('logs'):
+            os.makedirs('logs')
 
+        # Set up logging
+        with open(os.path.join('logs', filename), 'a', newline='') as file:  # 'a' mode will append to the file if it exists
+            writer = csv.writer(file)
+            # Only write the header if the file is empty
+            if file.tell() == 0:
+                writer.writerow(["Department", "Filename", "Execution Time", "History Steps"])
         # Enable scrolling
         stdscr.scrollok(True)
         stdscr.idlok(True)
@@ -66,7 +76,7 @@ def main(stdscr):
                     if active_doc:
                         elapsed_time = time.time() - start_time
                         doc_times[active_doc] = (elapsed_time, history_count)
-                        with open('processed_files.csv', 'a', newline='') as file:
+                        with open(os.path.join('logs', filename), 'a', newline='') as file:  # Write to the new filename
                             writer = csv.writer(file)
                             writer.writerow([active_doc[:2], active_doc, format_time(elapsed_time), history_count])
                     active_doc = current_doc
